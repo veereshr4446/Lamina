@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Viresh Ranjanagi">
+    <meta name="email" content="veereshtalikoti45@gmail.com">
+    <title>LUMINA - AI Study Assistant by Viresh Ranjanagi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* ========== TOP BANNER ========== */
+        .logo-banner {
+            width: 100%;
+            background: #ffffff;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .logo-banner img {
+            width: auto;
+            height: 70px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 20px 25px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffffff, #a6e3a1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .feature-card.active {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #ffffff;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+
+        .tool-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.8);
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        textarea::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* GENERATE BUTTON - ONLY "Generate" */
+        .generate-btn {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255,255,255,0.15);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .response-area {
+            background: rgba(0,0,0,0.8);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .response-title {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .response-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-icon {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+
+        .action-icon:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .response-content {
+            color: rgba(255,255,255,0.85);
+            line-height: 1.6;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* FOOTER WITH LOVE */
+        footer {
+            text-align: center;
+            padding: 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .made-with-love {
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .made-with-love a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .made-with-love a:hover {
+            color: #a6e3a1;
+        }
+
+        .footer-email {
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+
+        .footer-email a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+        }
+
+        .footer-email a:hover {
+            color: #ffffff;
+        }
+
+        .footer-copyright {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 768px) {
+            .logo-banner { padding: 12px 20px; }
+            .logo-banner img { height: 50px; }
+            .navbar { gap: 20px; padding: 10px; }
+            .nav-links { gap: 15px; }
+            .nav-links a { font-size: 0.8rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero { padding: 25px 15px; }
+            .features { grid-template-columns: 1fr; margin: 20px auto; }
+            .main-content { margin: 15px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BANNER WITH LOGO -->
+    <div class="logo-banner">
+        <img src="https://i.postimg.cc/q78yM5Lb/20260412-113337-removebg-preview.png" alt="LUMINA Logo">
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">About</a>
+        </div>
+        <div class="api-status" id="api-status">
+            <div class="status-dot"></div>
+            <span>Gemini AI Ready</span>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <h1>Illuminate Your Mind</h1>
+        <p>AI-powered study assistant with Google Gemini AI</p>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features">
+        <div class="feature-card active" onclick="switchMode('summarize', this)">
+            <div class="feature-icon">📄</div>
+            <h3>Smart Summarizer</h3>
+            <p>AI generates key points and summary</p>
+        </div>
+        <div class="feature-card" onclick="switchMode('flashcard', this)">
+            <div class="feature-icon">🃏</div>
+            <h3>AI Flashcards</h3>
+            <p>Convert notes into Q&A flashcards</p>
+        </div>
+        <div class="feature-card" onclick="switchMode('quiz', this)">
+            <div class="feature-icon">❓</div>
+            <h3>Quiz Generator</h3>
+            <p>Create practice tests with AI</p>
+        </div>
+        <div class="feature-card" onclick="switchMode('explain', this)">
+            <div class="feature-icon">💡</div>
+            <h3>Explain Simply</h3>
+            <p>Complex topics explained easily</p>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="section-title">
+            <span id="mode-icon">📄</span>
+            <span id="mode-title">Smart Summarizer</span>
+            <div class="toolbar">
+                <button class="tool-btn" onclick="clearInput()">Clear</button>
+                <button class="tool-btn" onclick="pasteExample()">Example</button>
+            </div>
+        </div>
+
+        <textarea id="user-input" rows="4" placeholder="Paste your study material, notes, or article here..."></textarea>
+        
+        <div class="stats">
+            <span>📝 Characters: <span id="char-count">0</span></span>
+            <span>📖 Words: <span id="word-count">0</span></span>
+        </div>
+
+        <!-- GENERATE BUTTON - ONLY "Generate" -->
+        <button class="generate-btn" id="generate-btn" onclick="processWithAI()">Generate</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 8px;">LUMINA AI is thinking...</p>
+        </div>
+
+        <div class="response-area" id="response-area">
+            <div class="response-header">
+                <div class="response-title">
+                    <span>🤖</span>
+                    <span>LUMINA AI Response</span>
+                </div>
+                <div class="response-actions" id="response-actions" style="display: none;">
+                    <span class="action-icon" onclick="copyToClipboard()">📋 Copy</span>
+                    <span class="action-icon" onclick="speakResponse()">🔊 Listen</span>
+                    <span class="action-icon" onclick="stopSpeaking()">⏹️ Stop</span>
+                    <span class="action-icon" onclick="downloadNotes()">📥 Save</span>
+                </div>
+            </div>
+            <div class="response-content" id="response-content">
+                ✨ Enter your study material above and click Generate! ✨
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER WITH LOVE -->
+    <footer>
+        <div class="footer-content">
+            <div class="made-with-love">
+                Made with ❤️ by <a href="#">Viresh Ranjanagi</a>
+            </div>
+            <div class="footer-email">
+                📧 <a href="mailto:veereshtalikoti45@gmail.com">veereshtalikoti45@gmail.com</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 LUMINA - AI Study Assistant
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentMode = 'summarize';
+        let currentResponse = '';
+        let currentUtterance = null;
+
+        function switchMode(mode, element) {
+            currentMode = mode;
+            document.querySelectorAll('.feature-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+            
+            const icons = { summarize: '📄', flashcard: '🃏', quiz: '❓', explain: '💡' };
+            const titles = { summarize: 'Smart Summarizer', flashcard: 'AI Flashcards', quiz: 'Quiz Generator', explain: 'Explain Simply' };
+            const placeholders = {
+                summarize: 'Paste your article, notes, or textbook section here for AI summarization...',
+                flashcard: 'Paste your study notes - AI will create flashcards...',
+                quiz: 'Enter a topic or paste notes to generate practice questions...',
+                explain: 'Paste a complex concept - AI will explain it simply...'
+            };
+            
+            document.getElementById('mode-icon').textContent = icons[mode];
+            document.getElementById('mode-title').textContent = titles[mode];
+            document.getElementById('user-input').placeholder = placeholders[mode];
+        }
+
+        function updateStats() {
+            const text = document.getElementById('user-input').value;
+            document.getElementById('char-count').textContent = text.length;
+            document.getElementById('word-count').textContent = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+        }
+
+        document.getElementById('user-input').addEventListener('input', updateStats);
+
+        function clearInput() {
+            document.getElementById('user-input').value = '';
+            updateStats();
+            showToast('Input cleared!');
+        }
+
+        function pasteExample() {
+            const examples = {
+                summarize: 'Photosynthesis is the process by which plants convert sunlight into energy...',
+                flashcard: 'JavaScript is a programming language created in 1995...',
+                quiz: 'The French Revolution began in 1789...',
+                explain: 'Quantum computing uses qubits instead of bits...'
+            };
+            document.getElementById('user-input').value = examples[currentMode] || examples.summarize;
+            updateStats();
+            showToast('Example pasted!');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function stopSpeaking() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                currentUtterance = null;
+                showToast('🔇 Stopped speaking');
+            }
+        }
+
+        async function processWithAI() {
+            const userInput = document.getElementById('user-input').value.trim();
+            if (!userInput) {
+                showToast('⚠️ Please enter some study material first!');
+                return;
+            }
+
+            stopSpeaking();
+            const generateBtn = document.getElementById('generate-btn');
+            const loadingDiv = document.getElementById('loading');
+            const responseContent = document.getElementById('response-content');
+            const responseActions = document.getElementById('response-actions');
+            
+            generateBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+            responseContent.innerHTML = '';
+            responseActions.style.display = 'none';
+            
+            setTimeout(() => {
+                currentResponse = `**${currentMode.toUpperCase()} Response**\n\nBased on your input:\n\n"${userInput.slice(0, 300)}..."\n\n[Demo Mode - Add Gemini API key for real AI responses]`;
+                responseContent.innerHTML = currentResponse.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                responseActions.style.display = 'flex';
+                generateBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+                showToast('✨ Response generated!');
+            }, 1500);
+        }
+
+        function copyToClipboard() {
+            if (currentResponse) {
+                navigator.clipboard.writeText(currentResponse.replace(/<br>/g, '\n').replace(/<strong>/g, '').replace(/<\/strong>/g, ''));
+                showToast('📋 Copied to clipboard!');
+            }
+        }
+
+        function speakResponse() {
+            if (currentResponse) {
+                stopSpeaking();
+                const text = currentResponse.replace(/<br>/g, ' ').replace(/<strong>/g, '').replace(/<\/strong>/g, '');
+                currentUtterance = new SpeechSynthesisUtterance(text);
+                currentUtterance.rate = 0.9;
+                window.speechSynthesis.speak(currentUtterance);
+                showToast('🔊 Speaking...');
+            }
+        }
+
+        function downloadNotes() {
+            if (currentResponse) {
+                const blob = new Blob([currentResponse], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `lumina-notes-${Date.now()}.html`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+                showToast('📥 Notes saved!');
+            }
+        }
+
+        updateStats();
+    </script>
+</body>
+</html>
